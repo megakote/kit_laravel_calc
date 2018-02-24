@@ -2,6 +2,9 @@
 
 @section('content')
   <style>
+    form {
+      width: 500px;
+    }
     button {
       margin: 30px auto;
       display: block !important;
@@ -14,18 +17,21 @@
     }
   </style>
 
+
   <div class="container">
     <div class="row justify-content-md-center">
       <form method="post" action="/execute">
         {{ csrf_field() }}
         <div class="form-row">
           <div class="col-6">
-            <label for="SCITY">Город отправления</label>
-            <input name="SCITY" type="text" id="SCITY" class="form-control" placeholder="Москва">
+            <label for="from_city">Город отправления</label>
+            <input name="SCITY" id="SCITY" type="hidden">
+            <input type="text" id="from_city" class="form-control" placeholder="Москва">
           </div>
           <div class="col-6">
-            <label for="RCITY">Город доставки</label>
-            <input name="RCITY" type="text" id="RCITY" class="form-control" placeholder="Караганда">
+            <label for="to_city">Город доставки</label>
+            <input name="RCITY" id="RCITY" type="hidden">
+            <input type="text" id="to_city" class="form-control" placeholder="Караганда">
           </div>
         </div>
         <div class="form-row">
@@ -45,4 +51,32 @@
       <p>Доставка займет {{ $DAYS }} дней, будет стоить {{ $PRICE['TOTAL'] }}{{ $E_WAERS }} </p>
     @endif
   </div>
+  <script>
+
+      token = "19ee934bb33404454e3d1047e8c51a80f408a0df",
+          type  = "ADDRESS",
+          $SCITY = $("#from_city"),
+          $RCITY = $("#to_city"),
+
+          $SCITY.suggestions({
+              token: token,
+              type: type,
+              hint: false,
+              bounds: "city-settlement",
+              formatSelected: function (data) {
+                  $('#SCITY').val(data.data.city)
+              }
+          });
+      $RCITY.suggestions({
+          token: token,
+          type: type,
+          hint: false,
+          bounds: "city-settlement",
+          formatSelected: function (data) {
+              $('#RCITY').val(data.data.city)
+          }
+      });
+
+
+  </script>
 @endsection
