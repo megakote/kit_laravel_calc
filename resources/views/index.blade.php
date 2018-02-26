@@ -3,7 +3,11 @@
 @section('content')
   <style>
     form {
-      width: 500px;
+      width: 600px;
+      padding: 30px 50px;
+      border: 2px solid #CCC;
+      border-radius: 28px;
+      margin: 50px auto;
     }
     button {
       margin: 30px auto;
@@ -18,6 +22,12 @@
     .suggestions-wrapper {
       display: block;
     }
+    .form-check {
+      padding-left: 1.25rem !important;
+    }
+    legend {
+      font-size: 13px;
+    }
   </style>
 
 
@@ -26,55 +36,61 @@
       <form method="post" action="/execute">
         {{ csrf_field() }}
         <div class="form-row">
-          <div class="col-6">
+          <div class="col-6 form-group">
             <label for="from_city">Город отправления*</label>
             <input name="SCITY" id="SCITY" type="hidden">
             <input type="text" id="from_city" class="form-control" placeholder="Москва" required>
           </div>
-          <div class="col-6">
+          <div class="col-6 form-group">
             <label for="to_city">Город доставки*</label>
             <input name="RCITY" id="RCITY" type="hidden">
             <input type="text" id="to_city" class="form-control" placeholder="Караганда" required>
           </div>
         </div>
         <div class="form-row">
-          <div class="col-6">
+          <div class="col-6 form-group">
             <label for="WEIGHT">Вес в кг*</label>
-            <input name="WEIGHT" type="text" id="WEIGHT" class="form-control" placeholder="10" required>
+            <input name="WEIGHT" type="number" id="WEIGHT" class="form-control" placeholder="10" required>
           </div>
-          <div class="col-6">
+          <div class="col-6 form-group">
             <label for="VOLUME">Объем в м3*</label>
-            <input name="VOLUME" type="text" id="VOLUME" class="form-control" placeholder="1.3" required>
+            <input name="VOLUME" type="number" id="VOLUME" class="form-control" placeholder="1.3" required>
           </div>
         </div>
         <div class="form-row">
-          <div class="col-6">
+          <div class="col-6 form-group">
             <label for="PRICE">Объявленная стоимость*</label>
-            <input name="PRICE" type="text" id="PRICE" class="form-control" placeholder="1000" required>
+            <div class="input-group col">
+              <input name="PRICE" type="text" id="PRICE" class="form-control" placeholder="1000" required>
+              <div class="input-group-append">
+                <span class="input-group-text">руб</span>
+              </div>
+            </div>
           </div>
-          <div class="col-6">
+          <div class="col-6 form-group">
             <label>Цену могу обосновать документами*</label>
             <div class="form-check form-check-inline-row">
               <label class="form-check-label" for="DOC_YES">Конечно</label>
               <input name="I_HAVE_DOC" type="radio"  id="DOC_YES" value="on" required>
-              <label class="form-check-label" for="DOC_YES">Смоневаюсь</label>
+              <label class="form-check-label" for="DOC_NO">Сомневаюсь</label>
               <input name="I_HAVE_DOC" type="radio"  id="DOC_NO" value="false" required>
             </div>
           </div>
         </div>
         <div class="form-row">
-          <div class="col-6">
-            <label for="DELIVERY">Нужна доставка груза по адресу получателя</label>
-            <input name="DELIVERY" type="checkbox" id="DELIVERY" class="form-control" placeholder="1000">
+          <div class="col-6 form-check">
+            <input name="DELIVERY" type="checkbox" id="DELIVERY" class="form-check-input">
+            <label class="form-check-label" for="DELIVERY">Нужна доставка груза по адресу получателя</label>
           </div>
-          <div class="col-6">
-            <label for="PICKUP">Нужен забор груза по адресу отправителя</label>
-            <input name="PICKUP" type="checkbox" id="PICKUP" class="form-control" placeholder="1000">
+          <div class="col-6 form-check">
+            <input name="PICKUP" type="checkbox" id="PICKUP" class="form-check-input">
+            <label class="form-check-label" for="PICKUP">Нужен забор груза по адресу отправителя</label>
           </div>
         </div>
         <button type="submit" class="btn btn-primary btn-lg">Посчитать</button>
         <div style="width:100%; display:none;" id="CITY_INFO" class="alert alert-danger" role="alert">
         </div>
+        <legend>* - поле обязательно для заполнения</legend>
       </form>
 
     </div>
