@@ -18,14 +18,11 @@ class IndexController extends Controller
         $data = $request->all();
         unset($data['_token']);
 
-        if (!$city_from = $kit->isCity($data['SCITY'])) {
-            return 'Не работаем с '. $data['SCITY'];
-        }
-        if (!$city_to = $kit->isCity($data['RCITY'])) {
-            return 'Не работаем с '. $data['RCITY'];
-        }
+        $resp = $kit->priceOrder($data, $data['SCITY'], $data['RCITY']);
 
-        $resp = $kit->priceOrder($data, $city_from, $city_to);
+        if (isset($resp['error'])) {
+            return $resp['error'];
+        }
 
         return view('index', $resp['data']);
     }
