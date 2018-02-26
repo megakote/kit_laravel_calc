@@ -18,6 +18,14 @@ class IndexController extends Controller
         $data = $request->all();
         unset($data['_token']);
 
+        $data['I_HAVE_DOC'] = ($data['I_HAVE_DOC'] == 'on') ? true : false;
+
+        if (isset($data['DELIVERY']))
+            $data['DELIVERY'] = ($data['DELIVERY'] == 'on') ? true : false;
+
+        if (isset($data['PICKUP']))
+            $data['PICKUP'] = ($data['PICKUP'] == 'on') ? true : false;
+
         $resp = $kit->priceOrder($data, $data['SCITY'], $data['RCITY']);
 
         if (isset($resp['error'])) {
