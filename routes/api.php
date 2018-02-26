@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-
+use slowdream\kit_laravel\Kit;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('/iscity', function (Request $request, Kit $kit) {
+    return response()->json(!!$kit->isCity($request->victim));
+});
+
+
