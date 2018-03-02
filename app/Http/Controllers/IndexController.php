@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use slowdream\kit_laravel\Kit;
+use alfamart24\laravel_tk_kit\Kit;
 
 class IndexController extends Controller
 {

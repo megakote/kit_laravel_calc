@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
-use slowdream\kit_laravel\Kit;
+use alfamart24\laravel_tk_kit\Kit;
 /*
 |--------------------------------------------------------------------------
 | API Routes
