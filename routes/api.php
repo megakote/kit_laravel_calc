@@ -21,4 +21,6 @@ Route::post('/iscity', function (Request $request, Kit $kit) {
     return response()->json(!!$kit->isCity($request->victim));
 });
 
+Route::post('/execute',['uses' =>'IndexController@execute', 'as' => 'execute_api']);
+
 

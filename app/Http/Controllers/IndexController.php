@@ -32,6 +32,9 @@ class IndexController extends Controller
             return $resp['error'];
         }
 
+        if ($request->route()->getName() == 'execute_api') {
+            return response()->json($resp['data']);
+        }
         return view('index', $resp['data']);
     }
 }

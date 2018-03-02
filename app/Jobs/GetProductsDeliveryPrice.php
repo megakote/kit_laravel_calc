@@ -67,7 +67,7 @@ class GetProductsDeliveryPrice implements ShouldQueue
           'PRICE' => $product->price
         ];
 
-        //TODO: информация по городам лучше тоже хранить в нашей базе, будет на 2 меньше запроса.
+        //TODO: информацию по городам лучше тоже хранить в нашей базе, будет на 2 меньше запроса.
 
         $data = Kit::priceOrder($productOptions, $city_one->name, $city_two->name);
 
@@ -83,7 +83,7 @@ class GetProductsDeliveryPrice implements ShouldQueue
               'city_two_id' => $city_two->id,
             ],
             [
-              'info' => json_encode($data)
+              'info' => json_encode($data['data'])
             ]
         );
 

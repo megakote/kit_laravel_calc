@@ -98,6 +98,7 @@
     @if(isset($DAYS))
       <p>Доставка займет {{ $DAYS }} дней, будет стоить {{ $PRICE['TOTAL'] }}{{ $E_WAERS }} </p>
     @endif
+    <p id="info"></p>
   </div>
   <script>
       function isCity (city, obj) {
@@ -148,5 +149,24 @@
               isCity(data.data.city, $('#to_city'))
           }
       });
+
+      $('form').on('submit', function (e) {
+          e.preventDefault();
+          var form = $('form').serialize();
+          $.ajax({
+              url: '/api/execute',
+              type: 'POST',
+              dataType: 'json',
+              data: form
+          })
+              .done(function(data) {
+                  var text = 'Цена:'+ data.PRICE.TOTAL +' Срок: ' + data.DAYS;
+                  $('#info').text(text);
+              })
+              .fail(function() {
+                  console.log("error");
+              });
+          return false;
+      })
   </script>
 @endsection
