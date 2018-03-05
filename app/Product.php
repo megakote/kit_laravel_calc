@@ -12,6 +12,7 @@ class Product extends Model
 
     public function getVolumeAttribute()
     {
-        return ($this->width * $this->height * $this->length) / 1000;
+        // Переводим в метры кубические.
+        return ($this->width * $this->height * $this->length) /  1000000 ;
     }
 }

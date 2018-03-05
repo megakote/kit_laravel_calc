@@ -15,8 +15,8 @@ class CreateDeliveryPricesTable extends Migration
     {
         Schema::create('delivery_prices', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('volume');
-            $table->integer('price');
+            $table->float('volume');
+            $table->integer('weight')->nullable();
             $table->integer('city_one_id');
             $table->integer('city_two_id');
             $table->text('info');

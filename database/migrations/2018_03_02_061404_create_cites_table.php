@@ -16,7 +16,7 @@ class CreateCitesTable extends Migration
         Schema::create('cites', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->integer('zone');
+            $table->integer('zone')->nullable();
             $table->boolean('can_delivery')->nullable();
             $table->timestamps();
         });

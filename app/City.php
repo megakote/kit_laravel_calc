@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use slowdream\kit_laravel\Kit;
+use alfamart24\laravel_tk_kit\Kit;
 use Illuminate\Support\Facades\Cache;
 
 class City extends Model
@@ -25,8 +25,8 @@ class City extends Model
         // Специально поставил очень большое значение, т.к.  города будут очень редко обновляться
         $city = $this->name;
         return Cache::remember('Kit_city_' . $city, 6000, function () use ($city) {
-            $data = Kit::isCity($city);
-            return !!$data;
+            $kit = new Kit();
+            return $kit->isCity($city);
         });
     }
 }

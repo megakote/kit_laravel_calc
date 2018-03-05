@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
+use App\Product;
+use App\Jobs\GetProductsDeliveryPrice;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,8 @@ use Illuminate\Foundation\Inspiring;
 |
 */
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->describe('Display an inspiring quote');
+Artisan::command('t', function () {
+    $products = Product::all();
+    $job = new GetProductsDeliveryPrice($products);
+    dispatch($job);
+});

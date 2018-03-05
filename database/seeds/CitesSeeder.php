@@ -11,6 +11,6 @@ class CitesSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\City::class, 1000)->create();
+        factory(App\City::class, 10)->create();
     }
 }

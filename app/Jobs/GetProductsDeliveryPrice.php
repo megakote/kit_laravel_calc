@@ -40,7 +40,7 @@ class GetProductsDeliveryPrice implements ShouldQueue
     {
         $products = $this->products;
         $cites = City::all();
-        $mainCity = City::new('name', 'Москва');
+        $mainCity = City::firstOrNew(['name' => 'Москва']);
 
         foreach ($products as $product) {
             foreach ($cites as $city) {
@@ -49,48 +49,88 @@ class GetProductsDeliveryPrice implements ShouldQueue
         }
     }
 
-    public function process (City $city_one, City $city_two, Product $product) {
+    /**
+     * Вычисляет приблизительную(?) стоимость доставки груза $product от $city_one до $city_two
+     *
+     * @param City $city_one
+     * @param City $city_two
+     * @param Product $product
+     *
+     * @return bool
+     */
+    public function process(City $city_one, City $city_two, Product $product)
+    {
 
         $cites = $this->sortCites($city_one, $city_two);
+
         $city_one = $cites[0];
         $city_two = $cites[1];
 
-        // На данный момент этот функционал дублируется в библиотеке
-        if (!$city_one->delivery || !$city_two->delivery)
+        $city_one_data = $city_one->delivery;
+        $city_two_data = $city_two->delivery;
+        if ((!$city_one_data || !$city_two_data) || ($city_one->name == $city_two->name) ) {
             return false;
+        }
 
         $productOptions = [
           'WEIGHT' => $product->weight,
-          'LENGTH' => $product->length,
-          'WIDTH' => $product->width,
-          'HEIGHT' => $product->height,
+          'VOLUME' => $product->volume,
           'PRICE' => $product->price
         ];
 
-        //TODO: информацию по городам лучше тоже хранить в нашей базе, будет на 2 меньше запроса.
-
-        $data = Kit::priceOrder($productOptions, $city_one->name, $city_two->name);
-
-        // На данный момент этот функционал дублируется в модели
-        if(!$data)
-            return false;
-
+        $kit = new Kit();
+        $data = $kit->priceOrderSlim($productOptions, $city_one_data, $city_two_data);
+        /*
+         * За каждые 50к стоимость груза добавляется 50р (тут считаем по минимуму, а накидываем уже в контроллере)
+         * Вес груза округляем до 50кг в большую сторону
+         * Объем округлить не получится
+         *
+        */
         DeliveryPrice::updateOrCreate(
-            [
-              'volume' => $product->volume, // TODO: тут выставить округление или диапозоны брать.
-              'price' => $product->price, // TODO: тут выставить округление или диапозоны брать.
-              'city_one_id' => $city_one->id,
-              'city_two_id' => $city_two->id,
-            ],
-            [
-              'info' => json_encode($data['data'])
-            ]
+          [
+            'volume' => round($product->volume, 2, PHP_ROUND_HALF_UP),
+            'weight' => $this->my_round($product->weight, 50),
+            'city_one_id' => $city_one->id,
+            'city_two_id' => $city_two->id,
+          ],
+          [
+            'info' => json_encode($data['data'])
+          ]
         );
 
     }
 
-    // TODO: защита от дублей когда записи отличаются только разным порядком городов
-    private function sortCites(City $city_one, City $city_two) {
-        return [$city_one, $city_two];
+    /**
+     * Защита от дублей когда записи отличаются только разным порядком городов
+     *
+     * @param City $city_one
+     * @param City $city_two
+     *
+     * @return array
+     */
+    private function sortCites(City $city_one, City $city_two)
+    {
+        $array = [$city_one->name, $city_two->name];
+        $array = sort($array);
+
+        if ($array[0] == $city_one->name) {
+            return [$city_one, $city_two];
+        } else {
+            return [$city_two, $city_one];
+        }
     }
+
+    /**
+     * Округляет $a до $n в большую сторону
+     *
+     * @param $a
+     * @param $n
+     *
+     * @return int
+     */
+    private function my_round($a, $n)
+    {
+        return (int) ((int)($a / $n) + ceil($a % $n / $n)) * $n;
+    }
+
 }
