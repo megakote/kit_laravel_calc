@@ -16,6 +16,5 @@ use App\Jobs\GetProductsDeliveryPrice;
 
 Artisan::command('t', function () {
     $products = Product::all();
-    $job = new GetProductsDeliveryPrice($products);
-    dispatch($job);
+    dispatch(new GetProductsDeliveryPrice($products));
 });
