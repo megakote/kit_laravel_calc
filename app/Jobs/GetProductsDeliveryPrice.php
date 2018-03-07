@@ -75,7 +75,8 @@ class GetProductsDeliveryPrice implements ShouldQueue
         $productOptions = [
           'WEIGHT' => $product->weight,
           'VOLUME' => $product->volume,
-          'PRICE' => $product->price
+          //'PRICE' => $product->price
+          'PRICE' => 1000
         ];
 
         $kit = new Kit();
