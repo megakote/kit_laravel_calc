@@ -87,7 +87,7 @@ class GetProductsDeliveryPrice implements ShouldQueue
          * Объем округлить не получится
          *
         */
-        DeliveryPrice::updateOrCreate(
+        return DeliveryPrice::updateOrCreate(
           [
             'volume' => round($product->volume, 2, PHP_ROUND_HALF_UP),
             'weight' => $this->my_round($product->weight, 50),
@@ -134,4 +134,15 @@ class GetProductsDeliveryPrice implements ShouldQueue
         return (int) ((int)($a / $n) + ceil($a % $n / $n)) * $n;
     }
 
+    public function getDeliveryPrice (City $city_one, City $city_two, Product $product)
+    {
+        $price = DeliveryPrice::where([
+          'volume' => round($product->volume, 2, PHP_ROUND_HALF_UP),
+          'weight' => $this->my_round($product->weight, 50),
+          'city_one_id' => $city_one->id,
+          'city_two_id' => $city_two->id,
+        ])->get();
+
+        return $price ? $price : $this->process($city_one, $city_two, $product);
+    }
 }
