@@ -1,7 +1,8 @@
 <?php
 
 use App\Product;
-use App\Jobs\GetProductsDeliveryPrice;
+use App\City;
+use App\Helpers\DeliveryCalc;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,5 +17,12 @@ use App\Jobs\GetProductsDeliveryPrice;
 
 Artisan::command('t', function () {
     $products = Product::all();
-    dispatch(new GetProductsDeliveryPrice($products));
+    $cites = City::all();
+    $mainCity = City::firstOrNew(['name' => 'Москва']);
+
+    foreach ($products as $product) {
+        foreach ($cites as $city) {
+            dump(new DeliveryCalc($mainCity, $city, $product));
+        }
+    }
 });
