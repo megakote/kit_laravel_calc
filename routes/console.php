@@ -25,4 +25,8 @@ Artisan::command('t', function () {
             dump(new DeliveryCalc($mainCity, $city, $product));
         }
     }
+
+    $time = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
+
+    echo "Выполнялось $time секунд\n";
 });

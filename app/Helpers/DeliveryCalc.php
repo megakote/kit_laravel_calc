@@ -10,28 +10,32 @@ use alfamart24\laravel_tk_kit\Kit;
 class DeliveryCalc
 {
 
+    private $kit;
+
     /**
      * DeliveryCalc constructor.
      *
-     * @param City $city_one
-     * @param City $city_two
-     * @param Product $product
      *
-     * @return DeliveryPrice
+     * @return void
      */
-    public function __construct(City $city_one, City $city_two, Product $product)
+    public function __construct()
+    {
+        $this->kit = new Kit();
+    }
+
+    public function execute(City $city_one, City $city_two, Product $product)
     {
         $cites = $this->sortCites($city_one, $city_two);
 
         $city_one = $cites[0];
         $city_two = $cites[1];
 
-        $price = DeliveryPrice::where(
-          ['volume', round($product->volume, 2, PHP_ROUND_HALF_UP)],
-          ['weight', $this->my_round($product->weight, 50)],
-          ['city_one_id', $city_one->id],
-          ['city_two_id', $city_two->id]
-        )->get();
+        $price = DeliveryPrice::where([
+          'volume' => round($product->volume, 2, PHP_ROUND_HALF_UP),
+          'weight' => $this->my_round($product->weight, 50),
+          'city_one_id' => $city_one->id,
+          'city_two_id' => $city_two->id
+        ])->first();
 
         // Если не нашел данных в базе, то делаем запрос к сервису
         if (!$price) {
@@ -66,15 +70,16 @@ class DeliveryCalc
             return false;
         }
 
-        $productOptions = [
+        $options = [
           'WEIGHT' => $product->weight,
           'VOLUME' => $product->volume,
-          //'PRICE' => $product->price
-          'PRICE' => 1000
+          'PRICE' => 1000,
+          'PICKUP' => false,
+          'DELIVERY' => false
         ];
 
-        $kit = new Kit();
-        $data = $kit->priceOrderSlim($productOptions, $city_one_data, $city_two_data);
+
+        $data = $this->kit->priceOrderSlim($options, $city_one_data, $city_two_data);
         /*
          * За каждые 50к стоимость груза добавляется 50р (тут считаем по минимуму, а накидываем уже в контроллере)
          * Вес груза округляем до 50кг в большую сторону
@@ -127,30 +132,5 @@ class DeliveryCalc
     private function my_round($a, $n)
     {
         return (int)((int)($a / $n) + ceil($a % $n / $n)) * $n;
-    }
-
-    /**
-     *  Наценки действующие на груз
-     *  Сейчас это не нужно тут, просто удалять жалко
-     */
-    private function extraPrice()
-    {
-        // Превышение гарабита по массе
-        if ($this->properties['weight'] > 1500) {
-            $this->extra += 0.5;
-        } elseif ($this->properties['weight'] > 1000) {
-            $this->extra += 0.25;
-        } elseif ($this->properties['weight'] > 500) {
-            $this->extra += 0.1;
-        }
-
-        // Превышение гарабита по Размеру одной из сторон
-        if ($this->properties['length'] > 900 || $this->properties['width'] > 900 || $this->properties['height'] > 900) {
-            $this->extra += 0.5;
-        } elseif ($this->properties['length'] > 600 || $this->properties['width'] > 600 || $this->properties['height'] > 600) {
-            $this->extra += 0.3;
-        } elseif ($this->properties['length'] > 400 || $this->properties['width'] > 400 || $this->properties['height'] > 400) {
-            $this->extra += 0.2;
-        }
     }
 }
